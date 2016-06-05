@@ -1,0 +1,51 @@
+{
+  "Commands": {
+	"clear": { "CommandType": 0 },
+	"exit": { "CommandType": 0 },
+	"ls": { "CommandType": 1 },
+	"cd": { "CommandType": 1 },
+	"cscope": { "CommandType": 1 },
+	"echo": { "CommandType": 1 },
+	"rm": { "CommandType": 1 },
+	"mv": { "CommandType": 1 },
+	"cp": { "CommandType": 1 },
+	"find": { "CommandType": 1 },
+	"wc": { "CommandType": 1 },
+	"ps": { "CommandType": 1 },
+	"grep": { "CommandType": 1 },
+	"man": { "CommandType": 1 },
+	"cat": { "CommandType": 1 },
+	"mkdir": { "CommandType": 1 },
+	"youtube-dl": { "CommandType": 1 },
+	"tig": { "CommandType": 1 },
+	"gitk": { "CommandType": 1 },
+	"kill": { "CommandType": 1 },
+	"history": { "CommandType": 1 },
+	"df": { "CommandType": 2, "Arguments": [ "-h" ] },
+	"du": { "CommandType": 2, "Arguments": [ "-h" ] },
+	"apt-get": { "CommandType": 2, "Arguments": [ "update" ] },
+	"apt": { "CommandType": 2, "Arguments": [ "update" ] },
+	"dpkg": { "CommandType": 2, "Arguments": [ "-l" ] },
+	"git": { "CommandType": 2,
+		  "Arguments": [ "clone", "log", "diff", "remote show", "remote update",
+				"pull", "add", "status", "branch -a", "checkout" ]
+		}
+  },
+  "Options": [
+	"--help", "help"
+  ],
+  "Files": [
+	".*bashrc", ".*bash_history", ".*bash_history_cleaner.py"
+  ],
+  "Description": [
+	"JSON input for bash_history_cleaner.py script. JSON specs given below.",
+	"Commands key stores the commands to be ignored.",
+		"CommandType key in each command entry stores the type of command.",
+		"The values are 0 for standalone, 1 for multiarguments and standalone, and 2 for specific arguments.",
+		"If the CommandType is 0, then usages of the command only (without arguments) will be ignored for history storage",
+		"If the CommandType is 1, then the usage of the command (with or without arguments) will be ignored for history storage",
+		"If the CommandType is 2, then there should be an extra key named Arguments for that command. This key maps to an array which has the list of second arguments which when used along with the command should be ignored for history storage.",
+	"Options key stores the list of options which when used with any bash command should be ignored for history storage.",
+	"Files key stores the list of filenames which when used in any bash command should be ignored for history storage."
+  ]
+}

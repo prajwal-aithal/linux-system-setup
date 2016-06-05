@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Android Studio variables
-export ANDROID_STUDIO="~/EvoluoLabs/android/android-studio/bin/"
+export ANDROID_STUDIO="~/UtilLabs/android/android-studio/bin/"
 export PATH=$PATH:"$ANDROID_STUDIO"
 alias android-studio="$ANDROID_STUDIO/studio.sh"
 

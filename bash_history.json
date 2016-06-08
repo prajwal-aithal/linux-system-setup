@@ -2,7 +2,10 @@
   "Commands": {
 	"clear": { "CommandType": 0 },
 	"exit": { "CommandType": 0 },
-	"ls": { "CommandType": 1 },
+	"python": { "CommandType": 0 },
+	"mount": { "CommandType": 0 },
+	"l[lsa]?": { "CommandType": 1 },
+	"s": { "CommandType": 1, "Comment": "ls gets typed as s due to Ctrl-L being used sometimes" },
 	"cd": { "CommandType": 1 },
 	"cscope": { "CommandType": 1 },
 	"echo": { "CommandType": 1 },
@@ -21,8 +24,10 @@
 	"gitk": { "CommandType": 1 },
 	"kill": { "CommandType": 1 },
 	"history": { "CommandType": 1 },
+	"diff": { "CommandType": 1 },
+	"top": { "CommandType": 1 },
 	"df": { "CommandType": 2, "Arguments": [ "-h" ] },
-	"du": { "CommandType": 2, "Arguments": [ "-h" ] },
+	"du": { "CommandType": 2, "Arguments": [ "-h", "-hs" ] },
 	"apt-get": { "CommandType": 2, "Arguments": [ "update" ] },
 	"apt": { "CommandType": 2, "Arguments": [ "update" ] },
 	"dpkg": { "CommandType": 2, "Arguments": [ "-l" ] },
@@ -35,7 +40,7 @@
 	"--help", "help"
   ],
   "Files": [
-	".*bashrc", ".*bash_history", ".*bash_history_cleaner.py"
+	".*bashrc", ".*bash_history", ".*bash_history_cleaner.py", ".*bash_aliases"
   ],
   "Description": [
 	"JSON input for bash_history_cleaner.py script. JSON specs given below.",

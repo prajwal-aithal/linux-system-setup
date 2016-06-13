@@ -31,7 +31,7 @@ def ignore_command(command):
 	for re_comm in ignore_commands:
 		if re.match(re_comm, command) != None:
 			if debug:
-				print command, "Ignored"
+				print command, "Ignored", re_comm
 			return True
 	return False
 
@@ -44,28 +44,28 @@ def build_from_json():
 
 	if "Options" in json_data.keys():
 		for option in json_data["Options"]:
-			regex = ".* "+option+"( .*)?"
-			ignore_commands.append(regex)
+			regex = ".* "+option+"( .*)*$"
+			ignore_commands.append(str(regex))
 
 	if "Files" in json_data.keys():
 		for files in json_data["Files"]:
-			regex = ".* "+files+"( .*)?"
-			ignore_commands.append(regex)
+			regex = ".* "+files+"( .*)*$"
+			ignore_commands.append(str(regex))
 
 	if "Commands" in json_data.keys():
 		commands_dict = json_data["Commands"]
 		for command in commands_dict.keys():
 			command_type = commands_dict[command]["CommandType"]
 			if command_type == 0:
-				ignore_commands.append(command)
+				ignore_commands.append(str("("+command+")"))
 			elif command_type == 1:
-				regex = command+"( .*)?"
-				ignore_commands.append(regex)
+				regex = command+"( .*)*$"
+				ignore_commands.append(str(regex))
 			elif command_type == 2:
 				command_arguments = commands_dict[command]["Arguments"]
 				for args in command_arguments:
-					regex = command+" "+args+"( .*)?"
-					ignore_commands.append(regex)
+					regex = command+" "+args+"( .*)*$"
+					ignore_commands.append(str(regex))
 	if debug:
 		print ignore_commands
 

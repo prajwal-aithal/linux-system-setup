@@ -75,4 +75,23 @@ grep_scripter() {
 
 	( set -x; grep -rn $exclude_dirs $exclude_files $other_args )
 }
+export MERGE_DELIM="<<<|>>>"
 alias grelias=grep_scripter
+
+# PS1 prompt setting
+if [ "$color_prompt" = yes ]; then
+	PS1='${debian_chroot:+($debian_chroot)}\[\e[0;32m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[1;32m\]\$\[\e[m\] \[\e[0m\]'
+else
+	PS1='${debian_chroot:+($debian_chroot)}\[\e[0;32m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[1;32m\]\$\[\e[m\] \[\e[0m\]'
+fi
+
+# File shredding
+recursive_shred() {
+	find $1 -depth -type f -exec shred -v -n 8 -z -u {} \;
+}
+alias rec_shred=recursive_shred
+
+# History macros
+HISTCONTROL=ignoredups:erasedups
+HISTSIZE=3000
+HISTFILESIZE=5000

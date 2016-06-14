@@ -9,74 +9,109 @@ alias android-studio="$ANDROID_STUDIO/studio.sh"
 alias history_cleaner=`python ~/.bash_history_cleaner.py`
 history_cleaner
 
-# rm alias
-rm_script() {
-	rmargs="$@"
-	echo "rm $rmargs"
-	echo -n "Sure (y/n)?: "
-	read user_inp
-	user_inp="$(echo $user_inp | awk '{print tolower($0)}')"
-	if [ $user_inp == "y" -o $user_inp == "yes" ]
-	then
-		rm -v $rmargs
+convert_to_lower() {
+	echo "$1" | awk '{print tolower($0)}'
+}
+
+#Safety aliases
+rm_safety_check() {
+	echo "Arguments supplied: $@"
+	echo -n "Want to proceed? Are you sure you dont want to use shred (y/n)?: "
+	read surety
+	surety=`convert_to_lower "$surety"`
+	if [ "$surety" == "y" -o "$surety" == "yes" ]
+		then
+		( set -x ; /bin/rm -v "$@" )
 	else
 		echo "rm not executed"
 	fi
 }
-alias rm=rm_script
+alias rm=rm_safety_check
+
+# File shredding
+recursive_shred() {
+	find $1 -depth -type f -exec shred -v -n 8 -z -u {} \;
+}
+alias rec_shred=recursive_shred
 
 # grep alias
-grep_scripter() {
-	usage_msg="\n\nUsage: grelias  --exdir=<list of comma separated directories to be excluded>\n\t\t--exfile=<list of comma separated file patterns to be excluded>\n\t\t--includegit (Includes the .git directory which is by default ignored)"
-
-	exclude_dirs=
-	exclude_files=
+parser_grep() {
+	usage_msg=$(cat <<-END
+Usage: grelias <normal grep options> [grelias options] <search term> [Path]
+         --exdir=<path1,path2,..>    Excluded directories
+         --exfile=<path1,path2,..>   Excluded file patterns
+         --includegit                Include .git folders in the search (excluded by default)
+         --includecscope             Include cscope.out files in the search (excluded by default)
+         --help                      Prints this usage message
+END
+)
+	exdir_args=()
+	exfile_args=()
+	other_args=()
 	includegit=0
-	other_args=
-	for arg in "$@"
-	do
-		case $arg in
-		--exdir=*)
-			exdirpath="${arg#*=}"
-			for exdir in ${exdirpath//,/ }
+	includecscope=0
+
+	while [ "$1" != "" ]; do
+		curr_arg="$1"
+		param=`echo $curr_arg | awk -F= '{print $1}'`
+		value=`echo $curr_arg | awk -F= '{print $2}'`
+		case $param in
+		--exdir)
+			IFS=',' read -ra exdir_arr <<< "$value"
+			for edir in "${exdir_arr[@]}"
 			do
-				exclude_dirs="$exclude_dirs --exclude-dir=$exdir"
+				exdir_args+=( " --exclude-dir='$edir'" )
 			done
-			shift
 			;;
-		--exfile=*)
-			exfilepath="${arg#*=}"
-			for exfile in ${exfilepath//,/ }
+		--exfile)
+			IFS=',' read -ra exfile_arr <<< "$value"
+			for efile in "${exfile_arr[@]}"
 			do
-				exclude_files="$exclude_files --exclude=$exfile"
+				exfile_args+=( " --exclude='$efile'" )
 			done
-			shift
 			;;
 		--includegit)
 			includegit=1
-			shift
 			;;
-		-?|-h|--help)
+		--includecscope)
+			includecscope=1
+			;;
+		-v)
+			echo -n "grep -v implies selecting non-matching lines (invert match) and not verbose. Are you sure? (y/n): "
+			read usrinp
+			usrinp=`convert_to_lower "$usrinp"`
+			if [ $usrinp == "y" -o $usrinp == "yes" ]; then
+				other_args+=( "-v" )
+			else
+				echo "Abandoning current search."
+				return
+			fi
+			;;
+		--help)
 			grep --help
-			echo -e "$usage_msg"
+			echo ""
+			echo ""
+			echo "$usage_msg"
 			return
-			;;
+                        ;;
 		*)
-			other_args="$other_args $arg"
-			shift
+			other_args+=( "$param" )
 			;;
 		esac
+		shift
 	done
 
-	# Exclude .git if --includegit is not specified
 	if [ $includegit == 0 ]; then
-		exclude_dirs="$exclude_dirs --exclude-dir=.git"
+		exdir_args+=( "--exclude-dir=.git" )
+	fi
+	if [ $includecscope == 0 ]; then
+		exfile_args+=( "--exclude=cscope.out" )
 	fi
 
-	( set -x; grep -rn $exclude_dirs $exclude_files $other_args )
+        ( set -x ; eval `echo -e "grep -nr ${exdir_args[@]} ${exfile_args[@]} ${other_args[@]}"` )
 }
 export MERGE_DELIM="<<<|>>>"
-alias grelias=grep_scripter
+alias grelias=parser_grep
 
 # PS1 prompt setting
 if [ "$color_prompt" = yes ]; then
@@ -84,12 +119,6 @@ if [ "$color_prompt" = yes ]; then
 else
 	PS1='${debian_chroot:+($debian_chroot)}\[\e[0;32m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[1;32m\]\$\[\e[m\] \[\e[0m\]'
 fi
-
-# File shredding
-recursive_shred() {
-	find $1 -depth -type f -exec shred -v -n 8 -z -u {} \;
-}
-alias rec_shred=recursive_shred
 
 # History macros
 HISTCONTROL=ignoredups:erasedups

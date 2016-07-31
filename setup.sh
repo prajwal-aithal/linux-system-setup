@@ -90,6 +90,6 @@ echo -e "\nBash aliases setup"
 # Removes the current copy of .bash_aliases
 verify_file_link ~/.bash_aliases $script_dir/bash_aliases false
 
-echo -e "\nAd-blocker hosts setup"
-# Setting custom hosts file
-verify_file_copy $script_dir/ad-blocker-hosts /etc/hosts true
+# Setup terminator configuration
+echo -e "\nTerminator config setup"
+verify_file_link ~/.config/terminator/config $script_dir/terminator-config false

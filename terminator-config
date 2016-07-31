@@ -1,0 +1,26 @@
+[global_config]
+  suppress_multiple_term_dialog = True
+  window_state = maximise
+[keybindings]
+  cycle_next = <Primary>Tab
+  cycle_prev = None
+  next_tab = <Primary><Shift>Tab
+  split_horiz = <Primary><Shift>r
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    background_darkness = 0.9
+    background_image = None
+    background_type = transparent
+    font = Inconsolata Bold 10
+    foreground_color = "#ffffff"
+    scrollback_infinite = True
+    use_system_font = False

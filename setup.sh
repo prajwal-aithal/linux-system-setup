@@ -93,3 +93,7 @@ verify_file_link ~/.bash_aliases $script_dir/bash_aliases false
 # Setup terminator configuration
 echo -e "\nTerminator config setup"
 verify_file_link ~/.config/terminator/config $script_dir/terminator-config false
+
+# Setup sublime text user configuration
+echo -e "\nSublime text config setup"
+verify_file_link ~/.config/sublime-text-3/Packages/User/Preferences.sublime-settings $script_dir/Preferences.sublime-settings false

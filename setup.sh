@@ -46,22 +46,17 @@ verify_file_link() {
 	fi
 }
 
-verify_file_copy() {
-	sourcefile=$1
-	targetfile=$2
-	issudo=$3
+append_if_absent() {
+	targetfile="$1"
+	searchstring="$2"
 
-	confirm_file_remove $targetfile $issudo
-	rm_confirm=$?
-	if [ $rm_confirm == 1 ]
+	if [ -f "$targetfile" ]
 	then
-		echo "  Copying $sourcefile to $targetfile"
-		if $issudo; then
-			( set -x; sudo cp $sourcefile $targetfile )
-		else
-			( set -x; cp $sourcefile $targetfile )
+		if grep "`printf '%q' "$searchstring"`" "$targetfile"; then
+			return
 		fi
 	fi
+	echo -e "$searchstring" >> "$targetfile"
 }
 
 for arg in "$@"
@@ -86,9 +81,8 @@ verify_file_link ~/.bash_history.json $script_dir/bash_history.json false
 verify_file_link ~/.bash_history_cleaner.py $script_dir/bash_history_cleaner.py false
 
 echo -e "\nBash aliases setup"
-# Setup .bash_aliases to link to the bash_aliases of this repo
-# Removes the current copy of .bash_aliases
-verify_file_link ~/.bash_aliases $script_dir/bash_aliases false
+# Setup .bash_aliases to source the bash_aliases in the script directory
+append_if_absent ~/.bash_aliases "if [ -f $script_dir/bash_aliases ]; then source $script_dir/bash_aliases; fi"
 
 # Setup terminator configuration
 echo -e "\nTerminator config setup"

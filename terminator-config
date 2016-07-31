@@ -4,7 +4,7 @@
 [keybindings]
   cycle_next = <Primary>Tab
   cycle_prev = None
-  next_tab = <Primary><Shift>Tab
+  next_tab = <Primary><Super>Tab
   split_horiz = <Primary><Shift>r
 [layouts]
   [[default]]

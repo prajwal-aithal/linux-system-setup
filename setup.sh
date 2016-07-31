@@ -1,25 +1,33 @@
 #!/bin/bash
 
-usage() {
+# Usage function
+function usage {
 	echo "Usage: $0 [--help]"
-	echo "	Sets up basic custom script in new Linux system"
+	echo "Sets up custom environment in Linux System"
+	echo "1. Setup history cleaner script to maintain clean history"
+	echo "2. Source custom aliases in each bash session (using ~/.bash_aliases)"
+	echo "3. Setup custom terminator configuration"
+	echo "4. Setup custom sublime text configuration"
 	exit 1
 }
 
-confirm_file_remove() {
-	file=$1
-	issudo=$2
+# Function to confirm removing file
+# Arg1: File to be removed
+# Arg2: true if the file to be removed needs sudo permission
+function confirm_file_remove {
+	file="$1"
+	isSudo=$2
 
 	echo -n "  Removing $file. Continue (y/n)?: "
-	read user_inp
-	user_inp="$(echo $user_inp | awk '{print tolower($0)}')"
-	if [ $user_inp == "y" -o $user_inp == "yes" ]
+	read userInp
+	userInp="$(echo "$userInp" | awk '{print tolower($0)}')"
+	if [ "$userInp" == "y" -o "$userInp" == "yes" ]
 	then
 		echo "    Removing $file."
-		if $issudo; then
-			( set -x; sudo rm $file )
+		if [ "$isSudo" == "true" ]; then
+			sudo rm $file
 		else
-			( set -x; rm $file )
+			rm $file
 		fi
 		return 1
 	else
@@ -28,37 +36,45 @@ confirm_file_remove() {
 	fi
 }
 
-verify_file_link() {
-	targetfile=$1
-	sourcefile=$2
-	issudo=$3
+# Function to link source to target (after removing original target file)
+# Arg1: Target file to be linked to
+# Arg2: Source file which is the symlink file
+# Arg3: true if linking needs sudo permission
+function verify_file_link {
+	targetFile="$1"
+	sourceFile="$2"
+	isSudo=$3
 
-	confirm_file_remove $targetfile $issudo
-	rm_confirm=$?
-	if [ $rm_confirm == 1 ]
+	confirm_file_remove "$targetFile" $isSudo
+	rmConfirm=$?
+	if [ $rmConfirm == 1 ]
 	then
-		echo "  Linking $targetfile to $sourcefile"
-		if $issudo; then
-			( set -x; sudo ln -s $sourcefile $targetfile )
+		echo "  Linking $targetFile to $sourceFile"
+		if [ "$isSudo" == "true" ]; then
+			sudo ln -s "$sourceFile" "$targetFile"
 		else
-			( set -x; ln -s $sourcefile $targetfile )
+			ln -s "$sourceFile" "$targetFile"
 		fi
 	fi
 }
 
-append_if_absent() {
-	targetfile="$1"
-	searchstring="$2"
+# Function to append input string to input file (not appended if the string is already present)
+# Arg1: Target file to append the string into
+# Arg2: Search string to be appeneded
+function append_if_absent {
+	targetFile="$1"
+	searchString="$2"
 
-	if [ -f "$targetfile" ]
+	if [ -f "$targetFile" ]
 	then
-		if grep "`printf '%q' "$searchstring"`" "$targetfile"; then
+		if grep "`printf '%q' "$searchString"`" "$targetFile"; then
 			return
 		fi
 	fi
-	echo -e "$searchstring" >> "$targetfile"
+	echo -e "$searchString" >> "$targetFile"
 }
 
+# Process the arguments
 for arg in "$@"
 do
 	case $arg in
@@ -72,22 +88,22 @@ do
 done
 
 # Find the script directory
-script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo "Setting up contents of $script_dir"
+__scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "Setting up contents of $__scriptDir"
 
 # Setup .bash_history_cleaner.py (removes current copy)
 echo -e "\nBash history cleaner script setup"
-verify_file_link ~/.bash_history.json $script_dir/bash_history.json false
-verify_file_link ~/.bash_history_cleaner.py $script_dir/bash_history_cleaner.py false
+verify_file_link ~/.bash_history.json $__scriptDir/bash_history.json false
+verify_file_link ~/.bash_history_cleaner.py $__scriptDir/bash_history_cleaner.py false
 
-echo -e "\nBash aliases setup"
 # Setup .bash_aliases to source the bash_aliases in the script directory
-append_if_absent ~/.bash_aliases "if [ -f $script_dir/bash_aliases ]; then source $script_dir/bash_aliases; fi"
+echo -e "\nBash aliases setup"
+append_if_absent ~/.bash_aliases "if [ -f $__scriptDir/bash_aliases ]; then source $__scriptDir/bash_aliases; fi"
 
 # Setup terminator configuration
 echo -e "\nTerminator config setup"
-verify_file_link ~/.config/terminator/config $script_dir/terminator-config false
+verify_file_link ~/.config/terminator/config $__scriptDir/terminator-config false
 
 # Setup sublime text user configuration
 echo -e "\nSublime text config setup"
-verify_file_link ~/.config/sublime-text-3/Packages/User/Preferences.sublime-settings $script_dir/Preferences.sublime-settings false
+verify_file_link ~/.config/sublime-text-3/Packages/User/Preferences.sublime-settings $__scriptDir/Preferences.sublime-settings false

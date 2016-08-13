@@ -1,5 +1,4 @@
 [global_config]
-  suppress_multiple_term_dialog = True
   window_state = maximise
 [keybindings]
   cycle_next = <Primary>Tab

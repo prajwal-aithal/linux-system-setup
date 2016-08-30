@@ -17,9 +17,9 @@ __timestampReadable=`date +"%b %d %Y %H:%M:%S %Z"`
 __includeFile=
 __archiveFile=
 __backupBase=$TARBASENAME"_"$__timestamp
-__vaultArchive='Vault.Archive.tar.gz'
-__vaultArchiveEnc='Vault.tar.gz.Enc'
-__ext="tar.gz"
+__ext="tar.bz2"
+__vaultArchive="Vault.Archive.$__ext"
+__vaultArchiveEnc="Vault.$__ext.Enc"
 
 __verbose=0
 __clean=1
@@ -147,7 +147,7 @@ function pack_backup {
 	echo ''
 	echo "VAULT: Archiving vault directories to $__vaultArchive"
 	printf '  %s\n' "${__vaultDirectories[@]}"
-	tar -zcf $__vaultArchive ${__vaultDirectories[@]}
+	tar -jcf $__vaultArchive ${__vaultDirectories[@]}
 
 	#Encrypt vault archive
 	echo ''
@@ -167,7 +167,7 @@ function pack_backup {
 	#Tarring backup base directory
 	echo ''
 	echo "ARCHIVE: Tarring $__backupBase to create $__backupBase.$__ext"
-	GZIP=-9 tar -zcf $__backupBase.$__ext $__backupBase
+	GZIP=-9 tar -jcf $__backupBase.$__ext $__backupBase
 	echo "  $__backupBase.$__ext: `du -sh $__backupBase.$__ext | cut -f1`"
 
 	#Completion
@@ -198,7 +198,7 @@ function unpack_backup {
 	#Untarring backup base directory
 	echo ''
 	echo "ARCHIVE: Untarring $__archiveFile to $__backupBase"
-	tar -zxf $__archiveFile
+	tar -jxf $__archiveFile
 	echo "  $__backupBase: `du -sh $__backupBase | cut -f1`"
 
 	echo "ENCRYPT: Decrypting $__vaultArchiveEnc to $__vaultArchive"

@@ -2,13 +2,20 @@
 
 # Usage function
 function usage {
-	echo "Usage: $0 [--help]"
-	echo "Sets up custom environment in Linux System"
-	echo "1. Setup history cleaner script to maintain clean history"
-	echo "2. Source custom aliases in each bash session (using ~/.bash_aliases)"
-	echo "3. Setup custom terminator configuration"
-	echo "4. Setup custom sublime text configuration"
+	echo 'Usage: $0 [--help]'
+	echo 'Sets up custom environment in Linux System'
+	echo '1. Setup history cleaner script to maintain clean history'
+	echo '2. Source custom aliases in each bash session (using ~/.bash_aliases)'
+	echo '3. Setup custom terminator configuration'
+	echo '4. Setup custom sublime text configuration'
 	exit 1
+}
+
+# Exit with error message
+function exit_with_error {
+	echo "$1"
+	echo ''
+	usage
 }
 
 # Function to confirm removing file
@@ -82,7 +89,7 @@ do
 		usage
 		;;
 	*)
-		usage
+		exit_with_error "Argument $arg not recognized"
 		;;
 	esac
 done

@@ -1,0 +1,19 @@
+## This is the file listing the contents to be backed-up
+## Lines starting with # are comments and will be ignored by the backup script
+## The backup script can be found at https://github.com/prajwal-aithal/linux-system-setup
+## The format of the list should be as follows:
+## <Key>::<Main folder/file name>;;<Semi-colon separated list of folders/files to be excluded within the main folder - paths relative to the main folder>
+## The key can be:
+##    Home - The main folder is relative to $HOME
+##    Root - The main folder path is absolute
+##    Vault - These main folder will be copied to an encrypted archive (all vault folders are relative to $HOME). In case of vault folders the exclusion list wont be used (but the ;; separator must still be present)
+## Any spaces in the paths should be escaped. Folder/file paths should not contain ;
+## Examples:
+## Home::Documents;;Personal;Dump;Other\ Docs
+## Root::/etc/apt/apt.conf;;
+## Vault::Documents/Personal;;
+##
+## Explanation:
+## 1. Backup Documents folder inside $HOME excluding the $HOME/Documents/Personal and $HOME/Documents/Dump folders
+## 2. Backup the /etc/apt/apt.conf file (path is absolute and is denoted by the Root key) with no exclusions
+## 3. Store the $HOME/Documents/Personal folder in the vault

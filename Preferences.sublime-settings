@@ -1,10 +1,6 @@
-// Settings in here override those in "Default/Preferences.sublime-settings",
-// and are overridden in turn by file type specific settings.
 {
-	
-    "hot_exit": false,
-
-    "close_windows_when_empty": true,
-
-    "highlight_line": true,
+	"close_windows_when_empty": true,
+	"font_size": 9,
+	"highlight_line": true,
+	"hot_exit": false
 }

@@ -33,15 +33,16 @@
 	"apt": { "CommandType": 2, "Arguments": [ "update", "show", "search", "list", "autoremove" ] },
 	"dpkg": { "CommandType": 2, "Arguments": [ "-l" ] },
 	"git": { "CommandType": 2,
-		  "Arguments": [ "clone", "log", "diff", "remote show", "remote update",
-				"pull", "add", "status", "branch -a", "checkout" ]
+		  "Arguments": [ "init", "clone", "log", "diff", "remote show", "remote update",
+				"remote set-url", "pull", "add", "status", "branch -a", "checkout",
+				"rebase --interactive", "commit --amend", "commit -s" ]
 		}
   },
   "Options": [
-	"--help", "help"
+	"--help", "help", "--version"
   ],
   "Files": [
-	".*bashrc", ".*bash_history", ".*bash_history_cleaner.py", ".*bash_aliases"
+	".*bashrc", ".*bash_history", ".*bash_history_cleaner.py", ".*bash_aliases", ".*gitignore"
   ],
   "Description": [
 	"JSON input for bash_history_cleaner.py script. JSON specs given below.",

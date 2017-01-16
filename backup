@@ -26,240 +26,240 @@ __clean=1
 
 #Usage message
 function usage {
-	echo 'Usage: ./backup <ACTION> <ACTION ARGUMENTS> [OPTIONAL ARGUMENTS]'
-	echo 'Backup script. Hosted at https://github.com/prajwal-aithal/linux-system-setup'
-	echo ''
-	echo 'ACTIONS:'
-	echo '  pack    - makes a backup archive'
-	echo '    Mandatory arguments:'
+  echo 'Usage: ./backup <ACTION> <ACTION ARGUMENTS> [OPTIONAL ARGUMENTS]'
+  echo 'Backup script. Hosted at https://github.com/prajwal-aithal/linux-system-setup'
+  echo ''
+  echo 'ACTIONS:'
+  echo '  pack    - makes a backup archive'
+  echo '    Mandatory arguments:'
         echo '      --includeFile=<path> - Backs up the directories listed in the file at path'
-	echo '                             Format of this file can be found in backup.format'
-	echo '  unpack  - unpacks the backup archive created using the pack action'
-	echo '    Mandatory arguments:'
-	echo '      --archiveFile=<path> - Path of the archive packed using the pack action of this script'
-	echo 'OPTIONAL ARGUMENTS:'
-	echo '  -v|--verbose             - Prints the directory structure of the backup folder'
-	echo '  --noclean                - Doesnt remove the intermediate directories'
-	echo '  -h|--help                - Prints this message and exits'
-	echo '  any other option         - Prints this message and exits'
-	exit 1
+  echo '                             Format of this file can be found in backup.format'
+  echo '  unpack  - unpacks the backup archive created using the pack action'
+  echo '    Mandatory arguments:'
+  echo '      --archiveFile=<path> - Path of the archive packed using the pack action of this script'
+  echo 'OPTIONAL ARGUMENTS:'
+  echo '  -v|--verbose             - Prints the directory structure of the backup folder'
+  echo '  --noclean                - Doesnt remove the intermediate directories'
+  echo '  -h|--help                - Prints this message and exits'
+  echo '  any other option         - Prints this message and exits'
+  exit 1
 }
 
 #Exit with error
 function exit_with_error {
-	echo "$1"
-	echo ''
-	usage
+  echo "$1"
+  echo ''
+  usage
 }
 
 #Clean environment
 function clean_env {
-	isExit=0
-	if [[ $# -gt 0 && "$1" == "EXIT" ]]; then
-		isExit=1
-	fi
+  isExit=0
+  if [[ $# -gt 0 && "$1" == "EXIT" ]]; then
+    isExit=1
+  fi
 
-	echo 'CLEAN: Cleaning up'
-	if [[ $isExit == 1 ]]; then
-		echo '  Ctrl-c received...'
-		if [[ $__pack == 1 && $__clean == 1 ]]; then
-			echo "  Removing $__backupBase*"
-			rm -rf $__backupBase*
-		elif [[ $__clean == 0 ]]; then
-			echo '  No clean set. Not cleaning'
-		fi
-		exit 0
-	fi
+  echo 'CLEAN: Cleaning up'
+  if [[ $isExit == 1 ]]; then
+    echo '  Ctrl-c received...'
+    if [[ $__pack == 1 && $__clean == 1 ]]; then
+      echo "  Removing $__backupBase*"
+      rm -rf $__backupBase*
+    elif [[ $__clean == 0 ]]; then
+      echo '  No clean set. Not cleaning'
+    fi
+    exit 0
+  fi
 
-	if [[ $__pack == 1 ]]; then
-		echo "  Removing $__backupBase"
-		rm -rf $__backupBase
-	fi
+  if [[ $__pack == 1 ]]; then
+    echo "  Removing $__backupBase"
+    rm -rf $__backupBase
+  fi
 }
 trap 'clean_env EXIT' INT
 
 #Load input list of directories to backup
 function load_input_list {
-	if [ ! -f "$__includeFile" ]; then
-		exit_with_error "Path presented to --includeFile:$__includeFile is not present"
-	fi
+  if [ ! -f "$__includeFile" ]; then
+    exit_with_error "Path presented to --includeFile:$__includeFile is not present"
+  fi
 
-	while read -r line
-	do
-		if [[ ! "$line" =~ "#".* ]]; then
-			dirKey=${line%%::*}
-			dirList=${line#*::}
-			mainDir=${dirList%%;;*}
-			mainDirBase=`basename $mainDir`
-			exDirList=${dirList#*;;}
-			IFS=';'; exDirArr=($exDirList)
+  while read -r line
+  do
+    if [[ ! "$line" =~ "#".* ]]; then
+      dirKey=${line%%::*}
+      dirList=${line#*::}
+      mainDir=${dirList%%;;*}
+      mainDirBase=`basename $mainDir`
+      exDirList=${dirList#*;;}
+      IFS=';'; exDirArr=($exDirList)
 
-			if [[ "$dirKey" == "Vault" ]]; then
-				__vaultDirectories+=("$HOMEDIR$mainDir")
-			else
-				if [[ "$dirKey" == "Home" ]]; then
-					mainDir=$HOMEDIR$mainDir
-				fi
-				if [ ! -z "$exDirList" ]; then
-					exDirList=`printf " --exclude /$mainDirBase/%s" "${exDirArr[@]}"`
-				fi
-				__backupDirectories+=("$mainDir;;;$exDirList")
-			fi
-		fi
-	done < "$__includeFile"
+      if [[ "$dirKey" == "Vault" ]]; then
+        __vaultDirectories+=("$HOMEDIR$mainDir")
+      else
+        if [[ "$dirKey" == "Home" ]]; then
+          mainDir=$HOMEDIR$mainDir
+        fi
+        if [ ! -z "$exDirList" ]; then
+          exDirList=`printf " --exclude /$mainDirBase/%s" "${exDirArr[@]}"`
+        fi
+        __backupDirectories+=("$mainDir;;;$exDirList")
+      fi
+    fi
+  done < "$__includeFile"
 }
 
 #Pack backup archive
 function pack_backup {
-	cd $HOMEDIR
+  cd $HOMEDIR
 
-	#Initialization
-	echo 'ACTION: pack'
-	echo '  Making backup'
-	echo "  Invoked @ $__timestampReadable"
-	echo "  Backup base directory @ $__backupBase"
-	echo "  Archive @ $__backupBase.$__ext"
+  #Initialization
+  echo 'ACTION: pack'
+  echo '  Making backup'
+  echo "  Invoked @ $__timestampReadable"
+  echo "  Backup base directory @ $__backupBase"
+  echo "  Archive @ $__backupBase.$__ext"
 
-	#Read directory list
-	load_input_list
+  #Read directory list
+  load_input_list
 
-	#Copying backup directories
-	echo ''
-	echo "BACKUP: Copying backup directories to $__backupBase"
-	mkdir $__backupBase
-	for dirLine in "${__backupDirectories[@]}"; do
-		dir=${dirLine%%;;;*}
-		exStr=${dirLine#*;;;}
+  #Copying backup directories
+  echo ''
+  echo "BACKUP: Copying backup directories to $__backupBase"
+  mkdir $__backupBase
+  for dirLine in "${__backupDirectories[@]}"; do
+    dir=${dirLine%%;;;*}
+    exStr=${dirLine#*;;;}
 
-		echo "  Processing $dir..."
-		folderSize=`du -sh $dir | cut -f1`
-		echo "    Copying $dir: $folderSize... "
-		if [[ $__verbose == 1 ]]; then
-			(set -x; eval `echo "rsync -az $exStr $dir $__backupBase"`)
-		else
-			eval `echo "rsync -az $exStr $dir $__backupBase"`
-		fi
-	done
+    echo "  Processing $dir..."
+    folderSize=`du -sh $dir | cut -f1`
+    echo "    Copying $dir: $folderSize... "
+    if [[ $__verbose == 1 ]]; then
+      (set -x; eval `echo "rsync -az $exStr $dir $__backupBase"`)
+    else
+      eval `echo "rsync -az $exStr $dir $__backupBase"`
+    fi
+  done
 
-	#Copy vault directories
-	__vaultArchive=$__backupBase/$__vaultArchive
-	__vaultArchiveEnc=$__backupBase/$__vaultArchiveEnc
-	echo ''
-	echo "VAULT: Archiving vault directories to $__vaultArchive"
-	printf '  %s\n' "${__vaultDirectories[@]}"
-	tar -jcf $__vaultArchive ${__vaultDirectories[@]}
+  #Copy vault directories
+  __vaultArchive=$__backupBase/$__vaultArchive
+  __vaultArchiveEnc=$__backupBase/$__vaultArchiveEnc
+  echo ''
+  echo "VAULT: Archiving vault directories to $__vaultArchive"
+  printf '  %s\n' "${__vaultDirectories[@]}"
+  tar -jcf $__vaultArchive ${__vaultDirectories[@]}
 
-	#Encrypt vault archive
-	echo ''
-	echo "ENCRYPT: Encrypting $__vaultArchive to $__vaultArchiveEnc"
-	openssl aes-256-cbc -in $__vaultArchive -out $__vaultArchiveEnc
-	rm $__vaultArchive
+  #Encrypt vault archive
+  echo ''
+  echo "ENCRYPT: Encrypting $__vaultArchive to $__vaultArchiveEnc"
+  openssl aes-256-cbc -in $__vaultArchive -out $__vaultArchiveEnc
+  rm $__vaultArchive
 
-	echo ''
-	echo "$__backupBase: `du -sh $__backupBase | cut -f1`"
+  echo ''
+  echo "$__backupBase: `du -sh $__backupBase | cut -f1`"
 
-	if [[ $__verbose == 1 ]]; then
-		echo ''
-		echo "Verbose mode... Listing structure of $__backupBase"
-		ls -R $__backupBase
-	fi
+  if [[ $__verbose == 1 ]]; then
+    echo ''
+    echo "Verbose mode... Listing structure of $__backupBase"
+    ls -R $__backupBase
+  fi
 
-	#Tarring backup base directory
-	echo ''
-	echo "ARCHIVE: Tarring $__backupBase to create $__backupBase.$__ext"
-	GZIP=-9 tar -jcf $__backupBase.$__ext $__backupBase
-	echo "  $__backupBase.$__ext: `du -sh $__backupBase.$__ext | cut -f1`"
+  #Tarring backup base directory
+  echo ''
+  echo "ARCHIVE: Tarring $__backupBase to create $__backupBase.$__ext"
+  GZIP=-9 tar -jcf $__backupBase.$__ext $__backupBase
+  echo "  $__backupBase.$__ext: `du -sh $__backupBase.$__ext | cut -f1`"
 
-	#Completion
-	echo ''
-	echo "FINISHED: Backup at $__timestampReadable completed. Exiting..."
+  #Completion
+  echo ''
+  echo "FINISHED: Backup at $__timestampReadable completed. Exiting..."
 }
 
 #Unpack backup archive
 function unpack_backup {
-	cd $HOMEDIR
+  cd $HOMEDIR
 
-	if [ ! -f "$__archiveFile" ]; then
-		exit_with_error "Path presented to --archiveFile: $__archiveFile not present"
-	fi
+  if [ ! -f "$__archiveFile" ]; then
+    exit_with_error "Path presented to --archiveFile: $__archiveFile not present"
+  fi
 
-	__archiveFileBase=`basename $__archiveFile`
-	__backupBase=${__archiveFileBase%.tar*}
-	__vaultArchiveEnc=$__backupBase/$__vaultArchiveEnc
-	__vaultArchive=$__backupBase/$__vaultArchive
+  __archiveFileBase=`basename $__archiveFile`
+  __backupBase=${__archiveFileBase%.tar*}
+  __vaultArchiveEnc=$__backupBase/$__vaultArchiveEnc
+  __vaultArchive=$__backupBase/$__vaultArchive
 
-	#Initialization
-	echo 'ACTION: unpack'
-	echo '  Unpacking backup'
-	echo "  Invoked @ $__timestampReadable"
-	echo "  Backup archive @ $__archiveFile"
-	echo "  Backup base directory @ $__backupBase"
+  #Initialization
+  echo 'ACTION: unpack'
+  echo '  Unpacking backup'
+  echo "  Invoked @ $__timestampReadable"
+  echo "  Backup archive @ $__archiveFile"
+  echo "  Backup base directory @ $__backupBase"
 
-	#Untarring backup base directory
-	echo ''
-	echo "ARCHIVE: Untarring $__archiveFile to $__backupBase"
-	tar -jxf $__archiveFile
-	echo "  $__backupBase: `du -sh $__backupBase | cut -f1`"
+  #Untarring backup base directory
+  echo ''
+  echo "ARCHIVE: Untarring $__archiveFile to $__backupBase"
+  tar -jxf $__archiveFile
+  echo "  $__backupBase: `du -sh $__backupBase | cut -f1`"
 
-	echo "ENCRYPT: Decrypting $__vaultArchiveEnc to $__vaultArchive"
-	openssl aes-256-cbc -d -in $__vaultArchiveEnc -out $__vaultArchive
-	rm $__vaultArchiveEnc
+  echo "ENCRYPT: Decrypting $__vaultArchiveEnc to $__vaultArchive"
+  openssl aes-256-cbc -d -in $__vaultArchiveEnc -out $__vaultArchive
+  rm $__vaultArchiveEnc
 
-	#Completion
-	echo ''
-	echo "FINISHED: Unpacking backup at $__timestampReadable completed. Exiting..."
+  #Completion
+  echo ''
+  echo "FINISHED: Unpacking backup at $__timestampReadable completed. Exiting..."
 }
 
 #Reading command line arguments
 for arg in "$@"
 do
-	case $arg in
-	pack)
-		__pack=1
-		;;
-	unpack)
-		__unpack=1
-		;;
-	--includeFile=*)
-		__includeFile=${arg#*=}
-		;;
-	--archiveFile=*)
-		__archiveFile=${arg#*=}
-		;;
-	-v|--verbose)
-		__verbose=1
-		;;
-	--noclean)
-		__clean=0
-		;;
-	-h|--help)
-		usage
-		;;
-	*)
-		exit_with_error "Argument not recognized: $arg"
-		;;
-	esac
+  case $arg in
+  pack)
+    __pack=1
+    ;;
+  unpack)
+    __unpack=1
+    ;;
+  --includeFile=*)
+    __includeFile=${arg#*=}
+    ;;
+  --archiveFile=*)
+    __archiveFile=${arg#*=}
+    ;;
+  -v|--verbose)
+    __verbose=1
+    ;;
+  --noclean)
+    __clean=0
+    ;;
+  -h|--help)
+    usage
+    ;;
+  *)
+    exit_with_error "Argument not recognized: $arg"
+    ;;
+  esac
 done
 
 #Checking for validity of options
 if [[ $__pack == 0 && $__unpack == 0 ]]; then
-	exit_with_error 'Action not presented'
+  exit_with_error 'Action not presented'
 elif [[ $__pack == 1 && $__unpack == 1 ]]; then
-	exit_with_error 'Either of pack or unpack actions can be provided'
+  exit_with_error 'Either of pack or unpack actions can be provided'
 elif [[ $__pack == 1 && -z "$__includeFile" ]]; then
-	exit_with_error '--includeFile argument is mandatory for pack action'
+  exit_with_error '--includeFile argument is mandatory for pack action'
 elif [[ $__unpack == 1 && -z "$__archiveFile" ]]; then
-	exit_with_error '--archiveFile argument is mandatory for unpack action'
+  exit_with_error '--archiveFile argument is mandatory for unpack action'
 fi
 
 #Pack or unpack the backup according to input options
 if [[ $__pack == 1 ]]; then
-	pack_backup
+  pack_backup
 else
-	unpack_backup
+  unpack_backup
 fi
 
 #Cleaning
 if [ $__clean -eq 1 ]; then
-	clean_env
+  clean_env
 fi

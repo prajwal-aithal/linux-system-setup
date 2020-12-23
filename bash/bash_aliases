@@ -1,19 +1,29 @@
 #!/bin/bash
 
+# -------------------------------------
+# History macros
+HISTCONTROL=ignoredups:erasedups
+HISTSIZE=3000
+HISTFILESIZE=5000
+
+# -------------------------------------
 # Android Studio variables
 export ANDROID_STUDIO="~/UtilLabs/android/android-studio/bin/"
 export PATH=$PATH:"$ANDROID_STUDIO"
 alias android-studio="$ANDROID_STUDIO/studio.sh"
 
+# -------------------------------------
 # Clean bash history (launched every time bash is started)
-alias history_cleaner=`python ~/.bash_history_cleaner.py`
-history_cleaner
+alias history_cleaner='python ~/.bash_history_cleaner.py'
+history_cleaner Debug > ~/.bash_history_cleaner.INFO
+tail -n1 ~/.bash_history_cleaner.INFO
 
 function convert_to_lower {
   echo "$1" | awk '{print tolower($0)}'
 }
 
-#Safety aliases
+# -------------------------------------
+# Safety aliases
 function rm_safety_check {
   echo "Arguments supplied: $@"
   echo -n "Want to proceed? Are you sure you dont want to use shred (y/n)?: "
@@ -28,12 +38,14 @@ function rm_safety_check {
 }
 alias rm=rm_safety_check
 
+# -------------------------------------
 # File shredding
 function recursive_shred {
   find $1 -depth -type f -exec shred -v -n 8 -z -u {} \;
 }
 alias rec_shred=recursive_shred
 
+# -------------------------------------
 # grep alias
 function parser_grep {
   usageMsg=$(cat <<-END
@@ -113,7 +125,3 @@ END
 export MERGE_DELIM="<<<|>>>"
 alias grelias=parser_grep
 
-# History macros
-HISTCONTROL=ignoredups:erasedups
-HISTSIZE=3000
-HISTFILESIZE=5000

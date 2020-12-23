@@ -28,10 +28,12 @@ def process_command(command):
 
 
 def ignore_command(command):
+  if command.startswith('#'):
+    print "Ignored:", command.strip('\n'), ":: #"
   for re_comm in ignore_commands:
     if re.match(re_comm, command) != None:
       if debug:
-        print command, "Ignored", re_comm
+        print "Ignored:", command.strip('\n'), "::", re_comm
       return True
   return False
 
@@ -39,8 +41,6 @@ def ignore_command(command):
 def build_from_json():
   with open(BASH_HISTORY_JSON) as json_file:
     json_data = json.load(json_file)
-  if debug:
-    print json_data
 
   if "Options" in json_data.keys():
     for option in json_data["Options"]:
@@ -67,7 +67,8 @@ def build_from_json():
           regex = command+" "+args+"( .*)*$"
           ignore_commands.append(str(regex))
   if debug:
-    print ignore_commands
+    print 'Ignored regex list\n=================='
+    print ' |-| '.join(ignore_commands)
 
 
 def usage():
@@ -92,12 +93,17 @@ def main():
 
   #Opening bash history to read all the commands
   history_file = open(BASH_HISTORY, "r")
+  print '\nIgnored commands list\n=================='
+  ignored_count = 0
   for line in history_file:
     re_command = strip_command(line)
     if not ignore_command(re_command):
       process_command(re_command)
+    else:
+      ignored_count += 1
   history_file.close()
 
+  print '\nBash history cleaner: Ignored {0} commands'.format(ignored_count)
   #Opening bash history file to write processed commands
   history_file = open(BASH_HISTORY, "w")
   for command in command_history:

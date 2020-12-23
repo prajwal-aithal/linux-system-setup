@@ -1,0 +1,58 @@
+#!/bin/bash
+
+function create_esc_sequence {
+  inpStr="$1"
+
+  echo "\[$inpStr\]"
+}
+
+function make_bold {
+  textStr="$1"
+
+  __boldSeq="\e[1m"
+  __boldReset="\e[0m"
+
+  echo "$(create_esc_sequence $__boldSeq)$textStr$(create_esc_sequence $__boldReset)"
+}
+
+function colorize {
+  textStr="$1"
+  colorCode="$2"
+
+  __colorSeq="\e[38;5;"
+  __colorReset="\e[0m"
+
+  __finalColorCode="$(printf '%sm' $__colorSeq$colorCode)"
+  echo "$(create_esc_sequence $__finalColorCode)$textStr$(create_esc_sequence $__colorReset)"
+}
+
+function connect_seq {
+  inpStr="$1"
+
+  echo "$(make_bold '––[')$inpStr$(make_bold ']')"
+}
+
+function get_host_type {
+  hostType=""
+
+  if [[ ! -z "$SSH_CLIENT" ]]; then
+    hostType="ssh"
+  fi
+
+  echo "$hostType"
+}
+
+function dynamic_prompt {
+  userName="$(colorize '\u' '10')"
+
+  hostType=`get_host_type`
+  hostName=$(colorize "$hostType\h" '75')
+
+  dirPath=$(colorize "\w" '229')
+
+  dateStr=`date +'%d.%b-%I:%M:%S.%p'`
+  
+  PS1="$(connect_seq $userName)$(connect_seq $hostName)$(connect_seq $dirPath)\n$(connect_seq $dateStr)$(make_bold '–\$ ')"
+}
+
+PROMPT_COMMAND=dynamic_prompt

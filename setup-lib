@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Usage function
+function usage {
+  echo 'Usage: $0 [--help]'
+  echo 'Sets up custom environment in Linux System'
+  echo '1. Setup history cleaner script to maintain clean history'
+  echo '2. Source custom aliases in each bash session (using ~/.bash_aliases)'
+  echo '3. Setup custom terminator configuration'
+  echo '4. Setup custom sublime text configuration'
+  exit 1
+}
+
+# Exit with error message
+function exit_with_error {
+  echo "$1"
+  echo ''
+  usage
+}
+
+# Function to confirm removing file
+# Arg1: File to be removed
+# Arg2: true if the file to be removed needs sudo permission
+function confirm_file_remove {
+  file="$1"
+  isSudo=$2
+
+  echo -n "  Removing $file. Continue (y/n)?: "
+  read userInp
+  userInp="$(echo "$userInp" | awk '{print tolower($0)}')"
+  if [ "$userInp" == "y" -o "$userInp" == "yes" ]
+  then
+    echo "    Removing $file."
+    if [ "$isSudo" == "true" ]; then
+      sudo rm $file
+    else
+      rm $file
+    fi
+    return 1
+  else
+    echo "    Current copy of $file not removed"
+    return 0
+  fi
+}
+
+# Function to link source to target (after removing original target file)
+# Arg1: Target file to be linked to
+# Arg2: Source file which is the symlink file
+# Arg3: true if linking needs sudo permission
+function verify_file_link {
+  targetFile="$1"
+  sourceFile="$2"
+  isSudo=$3
+
+  confirm_file_remove "$targetFile" $isSudo
+  rmConfirm=$?
+  if [ $rmConfirm == 1 ]
+  then
+    echo "  Linking $targetFile to $sourceFile"
+    if [ "$isSudo" == "true" ]; then
+      sudo ln -s "$sourceFile" "$targetFile"
+    else
+      ln -s "$sourceFile" "$targetFile"
+    fi
+  fi
+}
+
+# Function to append input string to input file (not appended if the string is already present)
+# Arg1: Target file to append the string into
+# Arg2: Search string to be appeneded
+function append_if_absent {
+  targetFile="$1"
+  searchString="$2"
+
+  if [ -f "$targetFile" ]
+  then
+    if grep "`printf '%q' "$searchString"`" "$targetFile"; then
+      return
+    fi
+  fi
+  echo -e "$searchString" >> "$targetFile"
+}

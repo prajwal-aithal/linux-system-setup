@@ -29,6 +29,8 @@ floating_modifier $mod
 
 # User overrides
 for_window [class="^.*"] border pixel 3
+for_window [title="keys_i3_cheatsheet"] [class="feh"] floating enable, move position center, focus
+for_window [title="screens_i3_cheatsheet"] [class="feh"] floating enable, move position center, focus
 
 # CATEGORY: Misc
 bindsym $mod+Shift+q kill
@@ -164,6 +166,8 @@ bindsym $mod+d exec dmenu_run
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec $confirm_exit_i3
+bindsym Mod4+w exec --no-startup-id ~/.keys_i3_cheatsheet.sh
+bindsym Mod4+s exec --no-startup-id ~/.screens_i3_cheatsheet.sh
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

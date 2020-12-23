@@ -20,8 +20,11 @@ order += "cpu_usage"
 order += "load"
 order += "wireless _first_"
 order += "ethernet _first_"
-order += "battery all"
 order += "volume master"
+order += "battery all"
+order += "tztime mtv"
+order += "tztime dub"
+order += "tztime blr"
 order += "tztime local"
 
 cpu_temperature 0 {
@@ -79,6 +82,21 @@ volume master {
 	format = "♪: %volume"
 	format_muted = "♪"
 	device = "default"
+}
+
+tztime dub {
+	format = "DUB %I:%M %p"
+	timezone = "Europe/Dublin"
+}
+
+tztime mtv {
+	format = "MTV %I:%M %p"
+	timezone = "America/Los_Angeles"
+}
+
+tztime blr {
+	format = "BLR %I:%M %p"
+	timezone = "Asia/Kolkata"
 }
 
 tztime local {

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Find the script directory
+__scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+__configDir="$__scriptDir/configs"
+__bashDir="$__scriptDir/bash"
+__scriptsDir="$__scriptDir/scripts"
+
 if [ -f "$__scriptDir/setup-lib" ]
 then
   source "$__scriptDir/setup-lib"
@@ -21,12 +27,6 @@ do
   esac
 done
 
-# Find the script directory
-__scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-__configDir="$__scriptDir/configs"
-__bashDir="$__scriptDir/bash"
-__scriptsDir="$__scriptDir/scripts"
-
 echo "Setting up contents of $__scriptDir"
 
 # Remove and install appropriate packages
@@ -39,22 +39,20 @@ __installPackages=`cat $__configDir/apt-install`
 
 # Setup .bash_history_cleaner.py (removes current copy)
 echo -e "\nBash history cleaner script setup"
-verify_file_link ~/.bash_history.json $__bashDir/bash_history.json false
-verify_file_link ~/.bash_history_cleaner.py $__bashDir/bash_history_cleaner.py false
+link_file ~/.bash_history.json $__bashDir/bash_history.json false
+link_file ~/.bash_history_cleaner.py $__bashDir/bash_history_cleaner.py false
 
-# Setup .bash_aliases to source the bash_aliases in the script directory
+# Setup .bash_aliases to source the bash_aliases and bash_ps1 in the script directory
 echo -e "\nBash aliases setup"
-append_if_absent ~/.bash_aliases "if [ -f $__bashDir/bash_aliases ]; then source $__bashDir/bash_aliases; fi"
-
-# Setup .bash_aliases to source the bash_ps1 in the script directory
-echo -e "\nBash ps1 setup"
-append_if_absent ~/.bash_aliases "if [ -f $__bashDir/bash_ps1 ]; then source $__bashDir/bash_ps1; fi"
+bash_aliases $__bashDir/bash_aliases
+echo -e "\nBash prompt setup"
+bash_aliases $__bashDir/bash_ps1
 
 # Setup sakura configuration
 echo -e "\nSakura config setup"
-verify_file_link ~/.config/sakura/sakura.conf $__configDir/sakura-config false
+link_file ~/.config/sakura/sakura.conf $__configDir/sakura-config false
 
 # Setup i3 configuration
 echo -e "\ni3 config setup"
-verify_file_link ~/.config/i3/config $__configDir/i3-config false
-verify_file_link ~/.config/i3status/config $__configDir/i3status-config false
+link_file ~/.config/i3/config $__configDir/i3-config false
+link_file ~/.config/i3status/config $__configDir/i3status-config false

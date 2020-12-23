@@ -1,40 +1,106 @@
 #!/bin/bash
+# PS1 prompt setting
+# Needs UTF-8 encoding to be set
+# To add more directory labels, add cases to the get_dir_label function
+# To add more directory paths, add cases to the get_dir_path function
 
+# Constants
+__holderBegin='\['
+__holderEnd='\]'
+__esc='\e'
+__colorCode="$__esc[38;5;"
+__colorReset="$__esc[0m"
+__boldCode="$__esc[1m"
+__smiley="✓"
+__frowney="✗"
+
+# Adds the holder strings around the input string and returns the final string
+# Arg#1: Input string to be held
 function create_esc_sequence {
-  inpStr="$1"
-
-  echo "\[$inpStr\]"
+  if [ $# -ne 1 ]; then
+    echo ""
+  else
+    local inpStr="$1"
+    echo "$__holderBegin$inpStr$__holderEnd"
+  fi
 }
 
-function make_bold {
-  textStr="$1"
-
-  __boldSeq="\e[1m"
-  __boldReset="\e[0m"
-
-  echo "$(create_esc_sequence $__boldSeq)$textStr$(create_esc_sequence $__boldReset)"
+# Returns the PS1 substring with color parameters added to the input string
+# Arg#1: Input string to be colored
+# Arg#2: Color value in 256 Xterm Color chart
+# Arg#3: If bold is needed (true for yes)
+function add_color() {
+  if [[ $# -lt 2 || "$1" == "" ]]; then
+    echo ""
+  else
+    local inpStr="$1"
+    local color="$2"
+    local bold="$3"
+    local colorSequence="$__colorCode$color$(if [[ $bold == 'true' ]]; then echo ';1'; fi)m"
+    echo "$(create_esc_sequence $colorSequence)$inpStr$(create_esc_sequence $__colorReset)"
+  fi
 }
 
-function colorize {
-  textStr="$1"
-  colorCode="$2"
-
-  __colorSeq="\e[38;5;"
-  __colorReset="\e[0m"
-
-  __finalColorCode="$(printf '%sm' $__colorSeq$colorCode)"
-  echo "$(create_esc_sequence $__finalColorCode)$textStr$(create_esc_sequence $__colorReset)"
+# Returns the PS1 substring with bold parameters added to the input string
+# This function retains the default color which cannot be done using add_color
+# Arg#1: Input string to be highlighted
+function add_bold() {
+  if [[ $# -ne 1 || "$1" == "" ]]; then
+    echo ""
+  else
+    local inpStr="$1"
+    echo "$(create_esc_sequence $__boldCode)$inpStr$(create_esc_sequence $__colorReset)"
+  fi
 }
 
-function connect_seq {
-  inpStr="$1"
+# Connector constants
+connectorOpen=$(add_bold '──[')
+connectorClose=$(add_bold ']')
 
-  echo "$(make_bold '––[')$inpStr$(make_bold ']')"
+# Returns the PS1 substring with connectors added around the input string
+# Arg#1: Input string to be surrounded with connectors
+function connect_seq() {
+  if [[ $# -ne 1 || "$1" == "" ]]; then
+    echo ""
+  else
+    local inpStr="$1"
+    echo "$connectorOpen$inpStr$connectorClose"
+  fi
 }
 
-function get_host_type {
-  hostType=""
+# Returns the path relative to the label for the fs the current path resides in
+# No arguments
+function get_dir_path() {
+  local dirPath="$PWD"
+  case $dirPath in
+    $HOME)
+      dirPath="~"
+      ;;
+    $HOME/*)
+      dirPath="~/${dirPath#$HOME/}"
+      ;;
+  esac
+  echo "$dirPath"
+}
 
+# Returns the smiley as relevant to the latest return code
+# No arguments
+function get_return_code() {
+  local returnSeq
+  if [[ $1 == "0" ]]; then
+    returnSeq="$(add_color $__smiley '10')"
+  else
+    returnSeq="$(add_color $__frowney '94' 'true')"
+  fi
+  echo "$returnSeq"
+}
+
+# Returns the type of host
+# No arguments
+function get_host_type() {
+  local hostType=""
+
+  # Add more conditions here
   if [[ ! -z "$SSH_CLIENT" ]]; then
     hostType="ssh"
   fi
@@ -42,17 +108,26 @@ function get_host_type {
   echo "$hostType"
 }
 
-function dynamic_prompt {
-  userName="$(colorize '\u' '10')"
+# PS1 prompt is as follows:
+#──[Host type:Short Hostname]──[Username]──[Directory]
+#─$
+function set_dynamic_prompt() {
+  local hostType=$(get_host_type)
+  hostType=$(add_bold $hostType)
+  if [[ "$hostType" != "" ]]; then
+    hostType="$hostType:"
+  fi
+  local hostName=$(add_color "$hostType\h" '75')
 
-  hostType=`get_host_type`
-  hostName=$(colorize "$hostType\h" '75')
+  local userName="${debian_chroot:+($debian_chroot)}\u"
+  userName=$(add_color "$userName" '10')
 
-  dirPath=$(colorize "\w" '229')
+  local ps1ReturnCode=$?
+  local dirPath="$(get_dir_path)"
+  local dirName="$(add_color $dirPath '229')"
+  local returnCode="$(get_return_code $ps1ReturnCode)"
+  local currTime="$(date +'%d.%b-%H:%M:%S')"
 
-  dateStr=`date +'%d.%b-%I:%M:%S.%p'`
-  
-  PS1="$(connect_seq $userName)$(connect_seq $hostName)$(connect_seq $dirPath)\n$(connect_seq $dateStr)$(make_bold '–\$ ')"
+  PS1="$(connect_seq $hostName)$(connect_seq $userName)$(connect_seq $dirName)\n$(connect_seq $currTime)$(connect_seq $returnCode)$(add_color '─\$' '15' 'true') "
 }
-
-PROMPT_COMMAND=dynamic_prompt
+PROMPT_COMMAND=set_dynamic_prompt

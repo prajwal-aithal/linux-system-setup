@@ -2,12 +2,19 @@
 
 # Usage function
 function usage {
-  echo 'Usage: $0 [--help]'
-  echo 'Sets up custom environment in Linux System'
-  echo '1. Setup history cleaner script to maintain clean history'
-  echo '2. Source custom aliases in each bash session (using ~/.bash_aliases)'
-  echo '3. Setup custom terminator configuration'
-  echo '4. Setup custom sublime text configuration'
+  echo 'Usage: $0 <action> <action arguments> [-h|--help]'
+  echo 'Provides functionality to setup custom environment in Linux'
+  echo 'Can be used as a script or functions defined in this script can be sourced'
+  echo ''
+  echo 'Actions:'
+  echo '  link_file <source-file> <target-file> : Links source-file to target-file'
+  echo '  bash_aliases <alias-file>             : Sources alias-file in ~/.bash_aliases'
+  echo ''
+  echo 'Examples:'
+  echo '  setup link_file ~/.bash_history.json $PWD/bash_history.json'
+  echo '    Links ~/.bash_history.json to $PWD/bash_history.json'
+  echo '  setup bash_aliases $PWD/bash_ps1'
+  echo '    Adds command to source the $PWD/bash_ps1 file to the ~/.bash_aliases file'
   exit 1
 }
 
@@ -18,17 +25,51 @@ function exit_with_error {
   usage
 }
 
-# Function to confirm removing file
+# Check the input string against the possible true values
+# Arg1: The input string
+# Arg2: Possible true values
+function check_user_input {
+  inputStr="$1"
+  trueValues=(${2//,/ })
+
+  for value in "${trueValues[@]}"; do
+    if [ "$inputStr" == "$value" ]; then
+      return 1
+    fi
+  done
+
+  return 0
+}
+
+# Prints custom message on screen and reads user input
+# Arg1: Custom message to be displaed on the screen
+# Arg2: The variable to store the user input in
+function get_user_input {
+  message="$1"
+  variable="$2"
+
+  echo -n "$message"
+  userinp_inside_function=''
+  read userinp_inside_function
+  eval "$variable=$(echo $userinp_inside_function | awk '{print tolower($0)}')"
+}
+
+# Confirms file deletion
 # Arg1: File to be removed
 # Arg2: true if the file to be removed needs sudo permission
 function confirm_file_remove {
   file="$1"
   isSudo=$2
 
-  echo -n "  Removing $file. Continue (y/n)?: "
-  read userInp
-  userInp="$(echo "$userInp" | awk '{print tolower($0)}')"
-  if [ "$userInp" == "y" -o "$userInp" == "yes" ]
+  if [ ! -f "$file" -a ! -h "$file" ]; then
+    return 1
+  fi
+
+  userinp=''
+  get_user_input "  Removing $file. Continue (y/n)?: " userinp
+  check_user_input "$userinp" "y,yes"
+  inputCase=$?
+  if [ $inputCase == 1 ]
   then
     echo "    Removing $file."
     if [ "$isSudo" == "true" ]; then
@@ -43,29 +84,39 @@ function confirm_file_remove {
   fi
 }
 
-# Function to link source to target (after removing original target file)
-# Arg1: Target file to be linked to
-# Arg2: Source file which is the symlink file
+# Links source to target (after removing original source file)
+# Arg1: Source file which is the symlink file
+# Arg2: Target file to be linked to
 # Arg3: true if linking needs sudo permission
-function verify_file_link {
-  targetFile="$1"
-  sourceFile="$2"
+function link_file {
+  sourceFile="$1"
+  targetFile="$2"
   isSudo=$3
+  sourceDir="$(dirname $sourceFile)"
 
-  confirm_file_remove "$targetFile" $isSudo
+  if [ ! -f "$targetFile" ]; then
+    exit_with_error "target file supplied to link_file ($targetFile) not present"
+  fi
+
+  if [ ! -d "$sourceDir" ]; then
+    echo "  Creating $sourceDir"
+    mkdir -p "$sourceDir"
+  fi
+
+  confirm_file_remove "$sourceFile" $isSudo
   rmConfirm=$?
   if [ $rmConfirm == 1 ]
   then
-    echo "  Linking $targetFile to $sourceFile"
+    echo "  Linking $sourceFile to $targetFile"
     if [ "$isSudo" == "true" ]; then
-      sudo ln -s "$sourceFile" "$targetFile"
+      sudo ln -s "$targetFile" "$sourceFile"
     else
-      ln -s "$sourceFile" "$targetFile"
+      ln -s "$targetFile" "$sourceFile"
     fi
   fi
 }
 
-# Function to append input string to input file (not appended if the string is already present)
+# Appends input string to input file (not appended if the string is already present)
 # Arg1: Target file to append the string into
 # Arg2: Search string to be appeneded
 function append_if_absent {
@@ -80,3 +131,47 @@ function append_if_absent {
   fi
   echo -e "$searchString" >> "$targetFile"
 }
+
+# Sources input file in ~/.bash_aliases
+# Arg1: File to be sourced in bash_aliases
+function bash_aliases() {
+  sourceFile="$1"
+
+  if [ ! -f "$sourceFile" ]; then
+    exit_with_error "source file supplied to bash_aliases ($sourceFile) not present"
+  fi
+
+  sourceString="if [ -f $sourceFile ]; then source $sourceFile; fi" 
+  append_if_absent ~/.bash_aliases "$sourceString"
+}
+
+# Find the script directory
+__scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Process the arguments
+numArgs=$#
+if [ $numArgs -lt 1 ]; then
+  return 0
+fi
+
+action="$1"
+case "$action" in
+  -h|--help)
+    usage
+    ;;
+  link_file)
+    if [ $numArgs -ne 3 ]; then
+      usage
+    fi
+    link_file "$2" "$3"
+    ;;
+  bash_aliases)
+    if [ $numArgs -ne 2 ]; then
+      usage
+    fi
+    bash_aliases "$2"
+    ;;
+  *)
+    usage
+    ;;
+esac

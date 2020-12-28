@@ -12,7 +12,7 @@ __colorCode="$__esc[38;5;"
 __colorReset="$__esc[0m"
 __boldCode="$__esc[1m"
 __smiley="✓"
-__frowney="✗"
+__frowney="!! ✗ !!"
 
 # Adds the holder strings around the input string and returns the final string
 # Arg#1: Input string to be held
@@ -87,10 +87,10 @@ function get_dir_path() {
 # No arguments
 function get_return_code() {
   local returnSeq
-  if [[ $1 == "0" ]]; then
-    returnSeq="$(add_color $__smiley '10')"
+  if [[ $1 -eq 0 ]]; then
+    returnSeq="$(add_color '$__smiley' '10')"
   else
-    returnSeq="$(add_color $__frowney '94' 'true')"
+    returnSeq="$(add_color '$__frowney' '94' 'true')"
   fi
   echo "$returnSeq"
 }
@@ -110,8 +110,9 @@ function get_host_type() {
 
 # PS1 prompt is as follows:
 #──[Host type:Short Hostname]──[Username]──[Directory]
-#─$
+#──[Date-Time]──[Return Code]──$
 function set_dynamic_prompt() {
+  local ps1ReturnCode=$?
   local hostType=$(get_host_type)
   hostType=$(add_bold $hostType)
   if [[ "$hostType" != "" ]]; then
@@ -122,7 +123,6 @@ function set_dynamic_prompt() {
   local userName="${debian_chroot:+($debian_chroot)}\u"
   userName=$(add_color "$userName" '10')
 
-  local ps1ReturnCode=$?
   local dirPath="$(get_dir_path)"
   local dirName="$(add_color $dirPath '229')"
   local returnCode="$(get_return_code $ps1ReturnCode)"

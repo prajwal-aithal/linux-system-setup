@@ -11,7 +11,7 @@
 
 exec "source ~/.bashrc"
 
-set $mod Mod1
+set $mod Mod4
 
 set $confirm_exit_i3 "i3-nagbar -t warning -m 'Do you really want to exit i3?' -b 'Yes, exit i3' 'i3-msg exit'"
 
@@ -51,8 +51,8 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 bindsym $mod+Shift+space floating toggle
-bindsym $mod+Mod4+x move scratchpad
-bindsym $mod+Mod4+v scratchpad show
+bindsym $mod+Mod1+x move scratchpad
+bindsym $mod+Mod1+v scratchpad show
 
 # CATEGORY: Window split
 bindsym $mod+h split h
@@ -74,16 +74,16 @@ bindsym $mod+6 workspace 6
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
-bindsym $mod+Mod4+0 workspace 10
-bindsym $mod+Mod4+1 workspace 11
-bindsym $mod+Mod4+2 workspace 12
-bindsym $mod+Mod4+3 workspace 13
-bindsym $mod+Mod4+4 workspace 14
-bindsym $mod+Mod4+5 workspace 15
-bindsym $mod+Mod4+6 workspace 16
-bindsym $mod+Mod4+7 workspace 17
-bindsym $mod+Mod4+8 workspace 18
-bindsym $mod+Mod4+9 workspace 19
+bindsym $mod+Mod1+0 workspace 10
+bindsym $mod+Mod1+1 workspace 11
+bindsym $mod+Mod1+2 workspace 12
+bindsym $mod+Mod1+3 workspace 13
+bindsym $mod+Mod1+4 workspace 14
+bindsym $mod+Mod1+5 workspace 15
+bindsym $mod+Mod1+6 workspace 16
+bindsym $mod+Mod1+7 workspace 17
+bindsym $mod+Mod1+8 workspace 18
+bindsym $mod+Mod1+9 workspace 19
 bindsym $mod+Ctrl+0 workspace 20
 bindsym $mod+Ctrl+1 workspace 21
 bindsym $mod+Ctrl+2 workspace 22
@@ -94,16 +94,16 @@ bindsym $mod+Ctrl+6 workspace 26
 bindsym $mod+Ctrl+7 workspace 27
 bindsym $mod+Ctrl+8 workspace 28
 bindsym $mod+Ctrl+9 workspace 29
-bindsym $mod+Ctrl+Mod4+0 workspace 30
-bindsym $mod+Ctrl+Mod4+1 workspace 31
-bindsym $mod+Ctrl+Mod4+2 workspace 32
-bindsym $mod+Ctrl+Mod4+3 workspace 33
-bindsym $mod+Ctrl+Mod4+4 workspace 34
-bindsym $mod+Ctrl+Mod4+5 workspace 35
-bindsym $mod+Ctrl+Mod4+6 workspace 36
-bindsym $mod+Ctrl+Mod4+7 workspace 37
-bindsym $mod+Ctrl+Mod4+8 workspace 38
-bindsym $mod+Ctrl+Mod4+9 workspace 39
+bindsym $mod+Ctrl+Mod1+0 workspace 30
+bindsym $mod+Ctrl+Mod1+1 workspace 31
+bindsym $mod+Ctrl+Mod1+2 workspace 32
+bindsym $mod+Ctrl+Mod1+3 workspace 33
+bindsym $mod+Ctrl+Mod1+4 workspace 34
+bindsym $mod+Ctrl+Mod1+5 workspace 35
+bindsym $mod+Ctrl+Mod1+6 workspace 36
+bindsym $mod+Ctrl+Mod1+7 workspace 37
+bindsym $mod+Ctrl+Mod1+8 workspace 38
+bindsym $mod+Ctrl+Mod1+9 workspace 39
 
 # CATEGORY: Moving to workspaces
 bindsym $mod+Shift+0 move container to workspace 0
@@ -116,16 +116,16 @@ bindsym $mod+Shift+6 move container to workspace 6
 bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
-bindsym $mod+Mod4+Shift+0 move container to workspace 10
-bindsym $mod+Mod4+Shift+1 move container to workspace 11
-bindsym $mod+Mod4+Shift+2 move container to workspace 12
-bindsym $mod+Mod4+Shift+3 move container to workspace 13
-bindsym $mod+Mod4+Shift+4 move container to workspace 14
-bindsym $mod+Mod4+Shift+5 move container to workspace 15
-bindsym $mod+Mod4+Shift+6 move container to workspace 16
-bindsym $mod+Mod4+Shift+7 move container to workspace 17
-bindsym $mod+Mod4+Shift+8 move container to workspace 18
-bindsym $mod+Mod4+Shift+9 move container to workspace 19
+bindsym $mod+Mod1+Shift+0 move container to workspace 10
+bindsym $mod+Mod1+Shift+1 move container to workspace 11
+bindsym $mod+Mod1+Shift+2 move container to workspace 12
+bindsym $mod+Mod1+Shift+3 move container to workspace 13
+bindsym $mod+Mod1+Shift+4 move container to workspace 14
+bindsym $mod+Mod1+Shift+5 move container to workspace 15
+bindsym $mod+Mod1+Shift+6 move container to workspace 16
+bindsym $mod+Mod1+Shift+7 move container to workspace 17
+bindsym $mod+Mod1+Shift+8 move container to workspace 18
+bindsym $mod+Mod1+Shift+9 move container to workspace 19
 bindsym $mod+Ctrl+Shift+0 move container to workspace 20
 bindsym $mod+Ctrl+Shift+1 move container to workspace 21
 bindsym $mod+Ctrl+Shift+2 move container to workspace 22
@@ -136,29 +136,29 @@ bindsym $mod+Ctrl+Shift+6 move container to workspace 26
 bindsym $mod+Ctrl+Shift+7 move container to workspace 27
 bindsym $mod+Ctrl+Shift+8 move container to workspace 28
 bindsym $mod+Ctrl+Shift+9 move container to workspace 29
-bindsym $mod+Ctrl+Mod4+Shift+0 move container to workspace 30
-bindsym $mod+Ctrl+Mod4+Shift+1 move container to workspace 31
-bindsym $mod+Ctrl+Mod4+Shift+2 move container to workspace 32
-bindsym $mod+Ctrl+Mod4+Shift+3 move container to workspace 33
-bindsym $mod+Ctrl+Mod4+Shift+4 move container to workspace 34
-bindsym $mod+Ctrl+Mod4+Shift+5 move container to workspace 35
-bindsym $mod+Ctrl+Mod4+Shift+6 move container to workspace 36
-bindsym $mod+Ctrl+Mod4+Shift+7 move container to workspace 37
-bindsym $mod+Ctrl+Mod4+Shift+8 move container to workspace 38
-bindsym $mod+Ctrl+Mod4+Shift+9 move container to workspace 39
+bindsym $mod+Ctrl+Mod1+Shift+0 move container to workspace 30
+bindsym $mod+Ctrl+Mod1+Shift+1 move container to workspace 31
+bindsym $mod+Ctrl+Mod1+Shift+2 move container to workspace 32
+bindsym $mod+Ctrl+Mod1+Shift+3 move container to workspace 33
+bindsym $mod+Ctrl+Mod1+Shift+4 move container to workspace 34
+bindsym $mod+Ctrl+Mod1+Shift+5 move container to workspace 35
+bindsym $mod+Ctrl+Mod1+Shift+6 move container to workspace 36
+bindsym $mod+Ctrl+Mod1+Shift+7 move container to workspace 37
+bindsym $mod+Ctrl+Mod1+Shift+8 move container to workspace 38
+bindsym $mod+Ctrl+Mod1+Shift+9 move container to workspace 39
 
 # CATEGORY: Workspace movements
-bindsym $mod+Mod4+Left move workspace to output left
-bindsym $mod+Mod4+Right move workspace to output right
-bindsym $mod+Mod4+Up move workspace to output up
-bindsym $mod+Mod4+Down move workspace to output down
+bindsym $mod+Mod1+Left move workspace to output left
+bindsym $mod+Mod1+Right move workspace to output right
+bindsym $mod+Mod1+Up move workspace to output up
+bindsym $mod+Mod1+Down move workspace to output down
 
 # CATEGORY: Applications
 bindsym $mod+Return exec sakura
-bindsym $mod+Mod4+t exec google-chrome
-bindsym $mod+Mod4+y exec google-chrome --incognito
-bindsym $mod+Mod4+q exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
-bindsym Mod4+l exec i3lock -c 000000
+bindsym $mod+Mod1+t exec google-chrome
+bindsym $mod+Mod1+y exec google-chrome --incognito
+bindsym $mod+Mod1+q exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
+bindsym $mod+l exec i3lock -c 000000
 bindsym $mod+Ctrl+l exec i3lock -c 000000
 bindsym $mod+d exec dmenu_run
 
@@ -166,8 +166,8 @@ bindsym $mod+d exec dmenu_run
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec $confirm_exit_i3
-bindsym Mod4+w exec --no-startup-id ~/.keys_i3_cheatsheet.sh
-bindsym Mod4+s exec --no-startup-id ~/.screens_i3_cheatsheet.sh
+bindsym Mod1+w exec --no-startup-id ~/.keys_i3_cheatsheet.sh
+bindsym Mod1+s exec --no-startup-id ~/.screens_i3_cheatsheet.sh
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

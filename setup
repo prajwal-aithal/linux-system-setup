@@ -61,3 +61,4 @@ link_file ~/.config/i3status/config $__configDir/i3status-config false
 echo -e "\nOther shortcuts setup"
 link_file ~/.keys_i3_cheatsheet.sh $__scriptsDir/keys_i3_cheatsheet.sh false
 link_file ~/.screens_i3_cheatsheet.sh $__scriptsDir/screens_i3_cheatsheet.sh false
+link_file ~/.battery_notifier.sh $__scriptsDir/battery_notifier.sh false

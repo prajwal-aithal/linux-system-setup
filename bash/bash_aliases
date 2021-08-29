@@ -14,7 +14,7 @@ alias android-studio="$ANDROID_STUDIO/studio.sh"
 
 # -------------------------------------
 # Clean bash history (launched every time bash is started)
-alias history_cleaner='python ~/.bash_history_cleaner.py'
+alias history_cleaner='python3 ~/.bash_history_cleaner.py'
 history_cleaner Debug > ~/.bash_history_cleaner.INFO
 tail -n1 ~/.bash_history_cleaner.INFO
 

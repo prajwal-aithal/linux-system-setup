@@ -20,6 +20,7 @@
 	"kill": { "CommandType": 1 },
 	"killall": { "CommandType": 1 },
 	"l[lsa]?": { "CommandType": 1 },
+	"lsysupdate": { "CommandType": 0 },
 	"man": { "CommandType": 1 },
 	"meld": { "CommandType": 1 },
 	"mkdir": { "CommandType": 1 },

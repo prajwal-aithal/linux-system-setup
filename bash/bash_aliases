@@ -12,6 +12,10 @@ export ANDROID_STUDIO="~/UtilLabs/android/android-studio/bin/"
 export PATH=$PATH:"$ANDROID_STUDIO"
 alias android-studio="$ANDROID_STUDIO/studio.sh"
 
+# --------------
+# System aliases
+alias lsysupdate='sudo apt update && sudo apt upgrade && sudo apt autoremove && sudo apt autoclean'
+
 # -------------------------------------
 # Clean bash history (launched every time bash is started)
 alias history_cleaner='python3 ~/.bash_history_cleaner.py'

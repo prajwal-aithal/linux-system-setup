@@ -33,6 +33,7 @@
 	"vim": { "CommandType": 1 },
 	"wc": { "CommandType": 1 },
 	"wget": { "CommandType": 1 },
+	"xinput" : { "CommandType": 1 },
 	"youtube-dl": { "CommandType": 1 },
 	"apt": { "CommandType": 2, "Arguments": [ "autoremove", "list", "search", "show", "update" ] },
 	"apt-get": { "CommandType": 2, "Arguments": [ "autoremove", "update" ] },
@@ -40,9 +41,9 @@
 	"dpkg": { "CommandType": 2, "Arguments": [ "-l" ] },
 	"du": { "CommandType": 2, "Arguments": [ "-h", "-hs" ] },
 	"git": { "CommandType": 2,
-		 "Arguments": [ "add", "branch -a", "checkout", "clone", "commit --amend", "commit -s",
-				"diff", "init", "log", "pull", "rebase --interactive", "remove set-url",
-				"remote show", "remote update", "status" ]
+		 "Arguments": [ "add", "branch -a", "checkout", "clone", "commit", "commit --amend",
+			 	"commit -s", "diff", "init", "log", "pull", "rebase --interactive",
+				"remove set-url", "remote show", "remote update", "status" ]
 		}
   },
   "Options": [

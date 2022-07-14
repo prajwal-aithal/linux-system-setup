@@ -94,7 +94,7 @@ function link_file {
   isSudo=$3
   sourceDir="$(dirname $sourceFile)"
 
-  if [ ! -f "$targetFile" ]; then
+  if [ ! -f "$targetFile" ] && [ ! -d "$targetFile" ]; then
     exit_with_error "target file supplied to link_file ($targetFile) not present"
   fi
 

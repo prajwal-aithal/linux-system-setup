@@ -57,6 +57,10 @@ echo -e "\ni3 config setup"
 link_file ~/.config/i3/config $__configDir/i3-config false
 link_file ~/.config/i3status/config $__configDir/i3status-config false
 
+# Setup autorandr configuration
+echo -e "\nautorandr config setup"
+link_file ~/.config/autorandr $__configDir/autorandr/ false
+
 # Setup other shortcuts
 echo -e "\nOther shortcuts setup"
 link_file ~/.keys_i3_cheatsheet.sh $__scriptsDir/keys_i3_cheatsheet.sh false

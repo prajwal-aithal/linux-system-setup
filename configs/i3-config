@@ -207,3 +207,4 @@ exec bash ~/.battery_notifier.sh &
 
 exec xautolock -time 20 -locker 'i3lock -c 000000' &
 exec autorandr --load mobile &
+exec redshift &

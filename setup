@@ -61,6 +61,10 @@ link_file ~/.config/i3status/config $__configDir/i3status-config false
 echo -e "\nautorandr config setup"
 link_file ~/.config/autorandr $__configDir/autorandr/ false
 
+# Setup redshift configuration
+echo -e "\nRedshift config setup"
+link_file ~/.config/redshift/redshift.conf $__configDir/redshift false
+
 # Setup other shortcuts
 echo -e "\nOther shortcuts setup"
 link_file ~/.keys_i3_cheatsheet.sh $__scriptsDir/keys_i3_cheatsheet.sh false

@@ -94,16 +94,6 @@ bindsym Mod4+Ctrl+6 workspace 26
 bindsym Mod4+Ctrl+7 workspace 27
 bindsym Mod4+Ctrl+8 workspace 28
 bindsym Mod4+Ctrl+9 workspace 29
-bindsym $mod+Ctrl+Mod4+0 workspace 30
-bindsym $mod+Ctrl+Mod4+1 workspace 31
-bindsym $mod+Ctrl+Mod4+2 workspace 32
-bindsym $mod+Ctrl+Mod4+3 workspace 33
-bindsym $mod+Ctrl+Mod4+4 workspace 34
-bindsym $mod+Ctrl+Mod4+5 workspace 35
-bindsym $mod+Ctrl+Mod4+6 workspace 36
-bindsym $mod+Ctrl+Mod4+7 workspace 37
-bindsym $mod+Ctrl+Mod4+8 workspace 38
-bindsym $mod+Ctrl+Mod4+9 workspace 39
 
 # CATEGORY: Moving to workspaces
 bindsym $mod+Shift+0 move container to workspace 0
@@ -136,16 +126,6 @@ bindsym Mod4+Ctrl+Shift+6 move container to workspace 26
 bindsym Mod4+Ctrl+Shift+7 move container to workspace 27
 bindsym Mod4+Ctrl+Shift+8 move container to workspace 28
 bindsym Mod4+Ctrl+Shift+9 move container to workspace 29
-bindsym $mod+Ctrl+Mod4+Shift+0 move container to workspace 30
-bindsym $mod+Ctrl+Mod4+Shift+1 move container to workspace 31
-bindsym $mod+Ctrl+Mod4+Shift+2 move container to workspace 32
-bindsym $mod+Ctrl+Mod4+Shift+3 move container to workspace 33
-bindsym $mod+Ctrl+Mod4+Shift+4 move container to workspace 34
-bindsym $mod+Ctrl+Mod4+Shift+5 move container to workspace 35
-bindsym $mod+Ctrl+Mod4+Shift+6 move container to workspace 36
-bindsym $mod+Ctrl+Mod4+Shift+7 move container to workspace 37
-bindsym $mod+Ctrl+Mod4+Shift+8 move container to workspace 38
-bindsym $mod+Ctrl+Mod4+Shift+9 move container to workspace 39
 
 # CATEGORY: Workspace movements
 bindsym $mod+Mod4+Left move workspace to output left
@@ -161,6 +141,7 @@ bindsym $mod+Mod4+q exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
 bindsym Mod4+l exec i3lock -c 000000
 bindsym $mod+Ctrl+l exec i3lock -c 000000
 bindsym $mod+d exec dmenu_run
+bindsym Mod4+v exec xfce4-popup-clipman
 
 # CATEGORY: i3 session controls
 bindsym $mod+Shift+c reload
@@ -168,6 +149,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec $confirm_exit_i3
 bindsym Mod4+w exec --no-startup-id ~/.keys_i3_cheatsheet.sh
 bindsym Mod4+s exec --no-startup-id ~/.screens_i3_cheatsheet.sh
+bindsym Mod4+m exec --no-startup-id autorandr --load-mobile
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -203,8 +185,8 @@ bar {
 	font pango:DejaVu Sans Mono 10
 }
 
-exec bash ~/.battery_notifier.sh &
-
 exec xautolock -time 20 -locker 'i3lock -c 000000' &
-exec autorandr --load mobile &
+exec bash ~/.battery_notifier.sh &
+exec autorandr &
 exec redshift &
+exec xfce4-clipman &

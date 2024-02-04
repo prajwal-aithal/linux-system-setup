@@ -5,8 +5,6 @@ rm *.png spl_*
 
 split -d -l 20 screens.txt spl_screen
 
-echo "HERE"
-
 for f in spl_*; do
   sed -i '1s;^;text 25 0 ";' $f
   echo "\"" >> $f

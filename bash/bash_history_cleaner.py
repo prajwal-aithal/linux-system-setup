@@ -29,7 +29,10 @@ def process_command(command):
 
 def ignore_command(command):
   if command.startswith('#'):
-    print("Ignored:", command.strip('\n'), ":: #")
+    if debug:
+      print("Ignored:", command.strip('\n'), ":: #")
+    return true
+
   for re_comm in ignore_commands:
     if re.match(re_comm, command) != None:
       if debug:
@@ -104,6 +107,7 @@ def main():
   history_file.close()
 
   print('\nBash history cleaner: Ignored {0} commands'.format(ignored_count))
+
   #Opening bash history file to write processed commands
   history_file = open(BASH_HISTORY, "w")
   for command in command_history:

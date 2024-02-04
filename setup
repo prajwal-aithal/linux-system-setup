@@ -64,6 +64,8 @@ link_file ~/.config/autorandr $__configDir/autorandr/ false
 # Setup redshift configuration
 echo -e "\nRedshift config setup"
 link_file ~/.config/redshift/redshift.conf $__configDir/redshift false
+link_file ~/.config/redshift.conf $__configDir/redshift false
+sudo aa-complain /usr/bin/redshift
 
 # Setup other shortcuts
 echo -e "\nOther shortcuts setup"

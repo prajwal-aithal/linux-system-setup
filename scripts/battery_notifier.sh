@@ -7,6 +7,12 @@ DANGER_LEVEL=15
 SUSPEND_LEVEL=5
 
 while [[ true ]]; do
+	acpi_output=$(acpi -b)
+	if [[ -z $acpi_output ]]; then
+		echo "acpi output is empty. Likely running on power_supply?"
+		break
+	fi
+
 	if [[ -n $(acpi -b | grep Charging) ]]; then
 		continue
 	fi
